@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Library Management System</title>
+  <style>
+    /* ======== CSS STYLES ======== */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4f6f8;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #004d99;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      font-size: 24px;
+      letter-spacing: 1px;
+    }
+
+    main {
+      padding: 20px;
+      max-width: 800px;
+      margin: auto;
+    }
+
+    form {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+    }
+
+    form h2 {
+      margin-top: 0;
+      color: #004d99;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    button {
+      background-color: #004d99;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      margin-top: 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background-color: #0066cc;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #004d99;
+      color: white;
+    }
+
+    .delete-btn {
+      background-color: #cc0000;
+    }
+
+    .delete-btn:hover {
+      background-color: #ff3333;
+    }
+
+    footer {
+      text-align: center;
+      padding: 15px;
+      background-color: #004d99;
+      color: white;
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+  <header>📚 Library Management System</header>
+
+  <main>
+    <form id="bookForm">
+      <h2>Add a New Book</h2>
+      <label>Title:</label>
+      <input type="text" id="title" required>
+
+      <label>Author:</label>
+      <input type="text" id="author" required>
+
+      <label>Year:</label>
+      <input type="number" id="year" required>
+
+      <button type="submit">Add Book</button>
+    </form>
+
+    <h2>Book List</h2>
+    <table id="bookTable">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Author</th>
+          <th>Year</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </main>
+
+  <footer>© 2025 Library Management System | Built with ❤️ in HTML, CSS & JS</footer>
+
+  <script>
+    /* ======== JAVASCRIPT LOGIC ======== */
+    const form = document.getElementById('bookForm');
+    const tableBody = document.querySelector('#bookTable tbody');
+
+    // Load books from localStorage on page load
+    document.addEventListener('DOMContentLoaded', loadBooks);
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const title = document.getElementById('title').value.trim();
+      const author = document.getElementById('author').value.trim();
+      const year = document.getElementById('year').value.trim();
+
+      if (!title || !author || !year) {
+        alert('Please fill out all fields.');
+        return;
+      }
+
+      const book = { title, author, year };
+      addBookToTable(book);
+      saveBook(book);
+
+      form.reset();
+    });
+
+    function addBookToTable(book) {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${book.title}</td>
+        <td>${book.author}</td>
+        <td>${book.year}</td>
+        <td><button class="delete-btn">Delete</button></td>
+      `;
+      tableBody.appendChild(row);
+
+      row.querySelector('.delete-btn').addEventListener('click', () => {
+        row.remove();
+        deleteBook(book.title);
+      });
+    }
+
+    function saveBook(book) {
+      const books = JSON.parse(localStorage.getItem('books')) || [];
+      books.push(book);
+      localStorage.setItem('books', JSON.stringify(books));
+    }
+
+    function loadBooks() {
+      const books = JSON.parse(localStorage.getItem('books')) || [];
+      books.forEach(addBookToTable);
+    }
+
+    function deleteBook(title) {
+      let books = JSON.parse(localStorage.getItem('books')) || [];
+      books = books.filter(b => b.title !== title);
+      localStorage.setItem('books', JSON.stringify(books));
+    }
+  </script>
+</body>
+</html>
